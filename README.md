@@ -16,5 +16,9 @@ Simply open `gloam_character_sheet.html` in any modern web browser. The sheet wi
 
 If you need to start over or create a new character, simply scroll to the bottom and click **Reset Character Sheet**.
 
-## Credits
-This is an independent tool. All Gloam rules, lore, and mechanics are property of Lone Legend.
+## Credits and License
+This is an independent fan-made tool. All Gloam rules, lore, and mechanics are copyright &copy; Sam Helms / Lone Legend. 
+
+To play the game, you must purchase the official rulebook. You can **[purchase the Gloam RPG rulebook here](https://the-lone-legend.itch.io/gloam)**.
+
+The HTML, CSS, and Javascript code for this character sheet is provided under the [MIT License](LICENSE), allowing free use and modification of the software tool itself.
