@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gloam Mobile Character Sheet</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&display=swap');
+
+        :root {
+            --bg-color: #e8e4d8; /* Richer parchment */
+            --card-bg: #ffffff;
+            --border-color: #2a2826;
+            --accent-color: #8c7355;
+            --text-main: #1a1918;
+            --text-muted: #5c554e;
+            --danger: #b32d2d;
+            --success: #2d5a2d;
+            --btn-bg: #3a3632;
+            --btn-active-bg: #1a1918;
+            --input-bg: #fdfaf3;
+            --focus-color: #a69b8d;
+            --focus-shadow: rgba(140, 115, 85, 0.2);
+            --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+            --notch-x: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3e%3cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3e%3c/svg%3e");
+            --pip-empty: inset 0 1px 3px rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        body.dark-mode {
+            --bg-color: #0d0c0b;
+            --card-bg: #1a1918;
+            --border-color: #a69b8d;
+            --accent-color: #d4af37; /* More vibrant gold in dark mode */
+            --text-main: #f2efe9;
+            --text-muted: #b0a89a;
+            --danger: #ff5c5c;
+            --success: #78c278;
+            --btn-bg: #8c8172;
+            --btn-active-bg: #a69b8d;
+            --input-bg: #262422;
+            --pip-empty: inset 0 1px 4px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Spectral', serif;
+            background-color: var(--bg-color);
+            background-image: var(--paper-texture);
+            color: var(--text-main);
+            margin: 0;
+            padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-size: 18px;
+        }
+
+        h1, h2, h3, h4, .ui-font {
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+
+        /* Layout Helpers */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+        }
+
+        /* Header & Logo */
+        .header {
+            text-align: center;
+            padding: 30px 0 20px;
+            position: relative;
+        }
+
+        .gloam-logo {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 0.8;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            text-shadow: 1px 1px 0px var(--bg-color), 3px 3px 0px var(--border-color);
+        }
+
+        .gloam-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.4em;
+            margin-bottom: 10px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--border-color);
+            color: var(--bg-color);
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            border-radius: 4px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Cards & Sections */
+        .card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color); /* Thicker border for definition */
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--border-color);
+            opacity: 0.8;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        select, 
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-family: 'Spectral', serif;
+            font-size: 16px;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--focus-shadow);
+        }
+
+        option {
+            background-color: var(--input-bg);
+            color: var(--text-main);
+        }
+
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+        @media (max-width: 480px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* Stats Display */
+        .stat-box {
+            text-align: center;
+            background: rgba(0,0,0,0.03);
+            border-radius: 8px;
+            padding: 10px 5px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box.highlight {
+            border-color: var(--accent-color);
+            background: var(--focus-shadow);
+        }
+
+        .stat-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-input {
+            font-size: 1.5rem !important;
+            font-weight: 800;
+            text-align: center;
+            padding: 4px !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        /* Tracker Elements (Wounds, Notches, Resolve) */
+        .tracker-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .pips-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pip {
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--border-color);
+            background: var(--input-bg);
+            box-shadow: var(--pip-empty);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pip.square { border-radius: 6px; }
+        .pip.circle { border-radius: 50%; }
+        .pip.resolve-pip { width: 40px; height: 40px; border-width: 2px; }
+
+        /* Checked states with vibrant colors */
+        .pip.checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .pip.wound.checked {
+            background-color: var(--danger);
+            border-color: var(--danger);
+            box-shadow: 0 0 10px rgba(179, 45, 45, 0.6);
+            transform: scale(1.1);
+        }
+
+        .pip.notch.checked {
+            background-color: #555; /* Steel grey for notches */
+            border-color: #333;
+            background-image: var(--notch-x);
+            background-size: 80%;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: none;
+            transform: rotate(90deg);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            height: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-bar.danger { background: var(--danger); }
+        .progress-bar.success { background: var(--success); }
+
+        /* Buttons */
+        .btn {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: var(--btn-bg);
+            color: white;
+        }
+
+        .btn-primary:active { background: var(--btn-active-bg); transform: scale(0.98); }
+
+        .btn-sm { padding: 6px 10px; font-size: 0.7rem; }
+
+        /* Lists */
+        .dynamic-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.03);
+            border-left: 3px solid var(--accent-color);
+            margin-bottom: 6px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .remove-btn {
+            color: var(--danger);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        /* Floating Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        /* Hit Location Styling */
+        .hit-location {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: rgba(0, 0, 0, 0.04);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hit-location.wounded {
+            border-color: var(--danger);
+            background: rgba(179, 45, 45, 0.08);
+            box-shadow: inset 0 0 10px rgba(179, 45, 45, 0.1);
+        }
+
+        .injury-text {
+            font-size: 0.75rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Helper Utilities */
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 8px; }
+        .mt-2 { margin-top: 8px; }
+        .hidden { display: none; }
+        
+        /* Mobile Nav */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .mobile-nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .mobile-nav a span.icon { font-size: 1.2rem; }
+
+        /* Force font size 16px to prevent iOS zoom */
+        .gear-select, .custom-gear-input, select, input, textarea {
+            font-size: 16px !important;
+        }
+    </style>
+
+</head>
+<body>
+
+    <button id="theme-toggle-btn" class="theme-toggle">🌙</button>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="gloam-logo">Gloam</h1>
+            <div class="gloam-subtitle">Character Sheet</div>
+            <span class="version-badge">v1.02 Ruleset</span>
+        </header>
+
+        <!-- Main Identity Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Identity</h2>
+                <span id="vocation-bonus" class="ui-font" style="font-size: 0.7rem; color: var(--success);"></span>
+            </div>
+            
+            <div class="form-group">
+                <label>Character Name</label>
+                <input type="text" id="charName" placeholder="Enter name...">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Vocation</label>
+                    <select id="charVocation">
+                        <option value="" disabled selected>Select...</option>
+                        <option value="Cutpurse">Cutpurse (Coins)</option>
+                        <option value="Herald">Herald (Cups)</option>
+                        <option value="Knight-Errant">Knight-Errant (Swords)</option>
+                        <option value="Mystic">Mystic (Wands)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Lifepath (Birth)</label>
+                    <select id="charLifepath">
+                        <option value="" disabled selected>Select...</option>
+                        <option value="Wands">Wands (Mystical)</option>
+                        <option value="Swords">Swords (War)</option>
+                        <option value="Cups">Cups (Academic)</option>
+                        <option value="Coins">Coins (Streets)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Experience</label>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <input type="number" id="statExp" placeholder="0" style="margin-bottom: 5px;">
+                        <div class="pips-container" id="exp-pips" style="flex-wrap: wrap;">
+                            <div class="pip square exp" onclick="toggleExp(1)" id="exp-1"></div>
+                            <div class="pip square exp" onclick="toggleExp(2)" id="exp-2"></div>
+                            <div class="pip square exp" onclick="toggleExp(3)" id="exp-3"></div>
+                            <div class="pip square exp" onclick="toggleExp(4)" id="exp-4"></div>
+                            <div class="pip square exp" onclick="toggleExp(5)" id="exp-5"></div>
+                            <div class="pip square exp" onclick="toggleExp(6)" id="exp-6"></div>
+                            <div class="pip square exp" onclick="toggleExp(7)" id="exp-7"></div>
+                            <div class="pip square exp" onclick="toggleExp(8)" id="exp-8"></div>
+                            <div class="pip square exp" onclick="toggleExp(9)" id="exp-9"></div>
+                            <div class="pip square exp" onclick="toggleExp(10)" id="exp-10"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Attributes</h2>
+                <span class="ui-font" style="font-size: 0.6rem; color: var(--text-muted);">Range 1-4</span>
+            </div>
+
+            <div class="grid-4 mb-2">
+                <div class="stat-box" id="box-Cups">
+                    <span class="stat-label">Cups</span>
+                    <select id="statCups" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                    </select>
+                </div>
+                <div class="stat-box" id="box-Wands">
+                    <span class="stat-label">Wands</span>
+                    <select id="statWands" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                    </select>
+                </div>
+                <div class="stat-box" id="box-Swords">
+                    <span class="stat-label">Swords</span>
+                    <select id="statSwords" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                    </select>
+                </div>
+                <div class="stat-box" id="box-Coins">
+                    <span class="stat-label">Coins</span>
+                    <select id="statCoins" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-2 mt-2" style="border-top: 1px dashed var(--border-color); padding-top: 15px;">
+                <div class="form-group text-center">
+                    <label>Movement Speed</label>
+                    <div id="displaySpeed" style="font-size: 1.8rem; font-weight: 800;">1</div>
+                    <span class="injury-text">Equal to Coins Stat</span>
+                </div>
+                <div class="form-group text-center">
+                    <label>Inventory Slots</label>
+                    <div class="display-slots" style="font-size: 1.8rem; font-weight: 800;">0 / 11</div>
+                    <span class="injury-text">10 + Coins Stat (Max 14)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resolve Tracker -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Resolve</h2>
+            </div>
+            
+            <div class="tracker-row">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="ui-font" style="font-size: 0.8rem;">Current Focus</span>
+                    <span class="ui-font" style="font-size: 0.7rem; opacity: 0.6;">(Max 10 per rules)</span>
+                </div>
+            </div>
+            
+            <div class="tracker-row mt-2">
+                <div class="pips-container" id="resolve-pips">
+                    <!-- JS generated pips -->
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div id="resolve-bar" class="progress-bar success" style="width: 100%;"></div>
+            </div>
+            
+            <div style="font-size: 0.8rem; font-style: italic; color: var(--text-muted); margin-top: 8px;">
+                Spend 1 to activate Talents or boost Tests. Recover during Rest or Carousing.
+            </div>
+        </section>
+
+
+        <!-- Lifepath Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Lifepath Events</h2>
+            </div>
+            
+            <div class="form-group">
+                <div class="grid-2 mb-2">
+                    <select id="eventSuit">
+                        <option value="" disabled selected>Suit...</option>
+                        <option value="Cups">Cups (Academic)</option>
+                        <option value="Swords">Swords (War)</option>
+                        <option value="Wands">Wands (Mystical)</option>
+                        <option value="Coins">Coins (Streets)</option>
+                    </select>
+                    <select id="inputLifepathEvents">
+                        <option value="" disabled selected>Select Suit First...</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" style="width: 100%;" id="btnAddLifepathEvent">Add History Event</button>
+            </div>
+            <ul id="listLifepathEvents" class="dynamic-list"></ul>
+        </section>
+
+        <!-- Health & Armor Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Body & Protection</h2>
+            </div>
+            <div id="death-warning" class="ui-font hidden" style="background: var(--danger); color: white; padding: 4px; text-align: center; border-radius: 4px; margin-bottom: 10px; font-size: 0.8rem;">
+                ☠ MORTALLY WOUNDED (DEAD) ☠
+            </div>
+
+            <div class="grid-2">
+                <!-- Head -->
+                <div class="hit-location" id="loc-Head">
+                    <div class="tracker-row">
+                        <label>Head</label>
+                        <div class="pips-container">
+                            <div class="pip circle wound" onclick="toggleWound('Head', 1)" id="wound-Head-1"></div>
+                            <div class="pip circle wound" onclick="toggleWound('Head', 2)" id="wound-Head-2" style="border-color: var(--danger);"></div>
+                        </div>
+                    </div>
+                    <select id="gearHead" class="ui-font gear-select" style="font-size: 0.8rem; padding: 4px; width: 100%; box-sizing: border-box; margin-bottom: 4px;">
+
+                        <option value="None" data-ap="0">No Armor</option>
+                        <option value="Helmet" data-ap="2">Helmet (2 AP, Swords 1)</option>
+                        <optgroup label="Magick Items">
+                            <option value="Circlet of Agony" data-ap="0">Circlet of Agony</option>
+                            <option value="Helm of Terror" data-ap="2">Helm of Terror (2 AP)</option>
+                            <option value="Huli'shjalmr" data-ap="2">Huli'shjálmr (2 AP)</option>
+                            <option value="Kynehelm" data-ap="0">Kynehelm (Impenetrable)</option>
+                            <option value="Tarnhelm" data-ap="2">Tarnhelm (2 AP)</option>
+                        </optgroup>
+                    
+                        <optgroup label="Custom">
+                            <option value="Custom 1 AP" data-ap="1">Custom (1 AP)</option>
+                            <option value="Custom 2 AP" data-ap="2">Custom (2 AP)</option>
+                            <option value="Custom 3 AP" data-ap="3">Custom (3 AP)</option>
+                            <option value="Custom 4 AP" data-ap="4">Custom (4 AP)</option>
+                        </optgroup>
+    </select>
+<input type="text" id="customHead" class="custom-gear-input" placeholder="Custom item name..." style="display: none; font-size: 0.75rem; padding: 4px; width: 100%; box-sizing: border-box; border: 1px dashed var(--border-color); background: rgba(0,0,0,0.03);">
+                    <div class="tracker-row mt-2">
+                        <span class="ui-font" style="font-size: 0.6rem;">Notches</span>
+                        <div class="pips-container" id="notches-Head"></div>
+                    </div>
+                    <span class="injury-text">Wounded: Unconscious.</span>
+                </div>
+
+                <!-- Torso -->
+                <div class="hit-location" id="loc-Torso">
+                    <div class="tracker-row">
+                        <label>Torso</label>
+                        <div class="pips-container">
+                            <div class="pip circle wound" onclick="toggleWound('Torso', 1)" id="wound-Torso-1"></div>
+                        </div>
+                    </div>
+                    <select id="gearTorso" class="ui-font gear-select" style="font-size: 0.8rem; padding: 4px; width: 100%; box-sizing: border-box; margin-bottom: 4px;">
+
+                        <option value="None" data-ap="0">Rags</option>
+                        <option value="Gambeson" data-ap="1">Gambeson (1 AP, Swords 1)</option>
+                        <option value="Cuirass" data-ap="3">Cuirass (3 AP, Swords 3)</option>
+                        <option value="Chainmail" data-ap="3">Chainmail (3 AP, Swords 3)</option>
+                        <optgroup label="Magick Items">
+                            <option value="Green Armor" data-ap="3">Green Armor (3 AP)</option>
+                            <option value="Heartwood Cuirass" data-ap="3">Heartwood Cuirass (3 AP)</option>
+                            <option value="Mithril Shirt" data-ap="10">Mithril Shirt (10 AP)</option>
+                            <option value="Palangina" data-ap="3">Palangina (3 AP)</option>
+                            <option value="Silken Mail" data-ap="3">Silken Mail (3 AP)</option>
+                        </optgroup>
+                    
+                        <optgroup label="Custom">
+                            <option value="Custom 1 AP" data-ap="1">Custom (1 AP)</option>
+                            <option value="Custom 2 AP" data-ap="2">Custom (2 AP)</option>
+                            <option value="Custom 3 AP" data-ap="3">Custom (3 AP)</option>
+                            <option value="Custom 4 AP" data-ap="4">Custom (4 AP)</option>
+                        </optgroup>
+    </select>
+<input type="text" id="customTorso" class="custom-gear-input" placeholder="Custom item name..." style="display: none; font-size: 0.75rem; padding: 4px; width: 100%; box-sizing: border-box; border: 1px dashed var(--border-color); background: rgba(0,0,0,0.03);">
+                    <div class="tracker-row mt-2">
+                        <span class="ui-font" style="font-size: 0.6rem;">Notches</span>
+                        <div class="pips-container" id="notches-Torso"></div>
+                    </div>
+                    <span class="injury-text">Wounded: Difficulty +2 & No Talents.</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- L. Arm -->
+                <div class="hit-location" id="loc-LArm">
+                    <div class="tracker-row">
+                        <label>L. Arm</label>
+                        <div class="pips-container">
+                            <div class="pip circle wound" onclick="toggleWound('LArm', 1)" id="wound-LArm-1"></div>
+                        </div>
+                    </div>
+                    <select id="gearLArm" class="ui-font gear-select" style="font-size: 0.8rem; padding: 4px; width: 100%; box-sizing: border-box; margin-bottom: 4px;">
+
+                        <option value="Empty" data-ap="0">Empty</option>
+                        <optgroup label="Armor">
+                            <option value="Shield" data-ap="3">Shield (3 AP, Swords 1)</option>
+                            <option value="Gauntlet" data-ap="1">Gauntlet (1 AP, Swords 2)</option>
+                        </optgroup>
+                        <optgroup label="Weapons">
+                            <option value="Club" data-ap="0">Club</option>
+                            <option value="Dagger" data-ap="0">Dagger</option>
+                            <option value="Staff" data-ap="0">Staff</option>
+                            <option value="Sling" data-ap="0">Sling</option>
+                            <option value="Axe" data-ap="0">Axe</option>
+                            <option value="Bow" data-ap="0">Bow</option>
+                            <option value="Spear" data-ap="0">Spear</option>
+                            <option value="Whip" data-ap="0">Whip</option>
+                            <option value="Sword" data-ap="0">Sword</option>
+                            <option value="Mace" data-ap="0">Mace</option>
+                            <option value="Crossbow" data-ap="0">Crossbow</option>
+                            <option value="Warhammer" data-ap="0">Warhammer</option>
+                            <option value="Greatsword" data-ap="0">Greatsword</option>
+                            <option value="Polearm" data-ap="0">Polearm</option>
+                            <option value="Lance" data-ap="0">Lance</option>
+                        </optgroup>
+                        <optgroup label="Magick Items">
+                            <option value="Duban" data-ap="3">Dubán (Shield)</option>
+                            <option value="Gauntlets of Missing Missiles" data-ap="1">Gauntlets of Missiles</option>
+                            <option value="Jarnglofar" data-ap="1">Járnglófar (Gauntlet)</option>
+                            <option value="Silence" data-ap="3">Silence (Shield)</option>
+                            <option value="Begallta" data-ap="0">Begallta (Dagger)</option>
+                            <option value="Dainsleif" data-ap="0">Dáinsleif (Sword)</option>
+                            <option value="Draugr" data-ap="0">Draugr (Sword)</option>
+                            <option value="Dyrnwyn" data-ap="0">Dyrnwyn (Sword)</option>
+                            <option value="Elf-Shot" data-ap="0">Elf-Shot (Bow)</option>
+                            <option value="Fragarach" data-ap="0">Fragarach (Sword)</option>
+                            <option value="La Scavara" data-ap="0">La Scávara (Lance)</option>
+                            <option value="Mistletoe" data-ap="0">Mistletoe (Sword)</option>
+                            <option value="Morallta" data-ap="0">Morallta (Sword)</option>
+                            <option value="Orna" data-ap="0">Orna (Sword)</option>
+                            <option value="Magick Sling" data-ap="0">Magick Sling</option>
+                            <option value="Szczerbiec" data-ap="0">Szczerbiec (Dagger)</option>
+                            <option value="Thunderbolt" data-ap="0">Thunderbolt (Javelin)</option>
+                            <option value="Tizona" data-ap="0">Tizona (Sword)</option>
+                        </optgroup>
+                    
+                        <optgroup label="Custom">
+                            <option value="Custom 1 AP" data-ap="1">Custom (1 AP)</option>
+                            <option value="Custom 2 AP" data-ap="2">Custom (2 AP)</option>
+                            <option value="Custom 3 AP" data-ap="3">Custom (3 AP)</option>
+                            <option value="Custom 4 AP" data-ap="4">Custom (4 AP)</option>
+                        </optgroup>
+    </select>
+<input type="text" id="customLArm" class="custom-gear-input" placeholder="Custom item name..." style="display: none; font-size: 0.75rem; padding: 4px; width: 100%; box-sizing: border-box; border: 1px dashed var(--border-color); background: rgba(0,0,0,0.03);">
+                    <div class="tracker-row mt-2">
+                        <span class="ui-font" style="font-size: 0.6rem;">Notches</span>
+                        <div class="pips-container" id="notches-LArm"></div>
+                    </div>
+                    <span class="injury-text">Wounded: Drop item / No use.</span>
+                </div>
+
+                <!-- R. Arm -->
+                <div class="hit-location" id="loc-RArm">
+                    <div class="tracker-row">
+                        <label>R. Arm</label>
+                        <div class="pips-container">
+                            <div class="pip circle wound" onclick="toggleWound('RArm', 1)" id="wound-RArm-1"></div>
+                        </div>
+                    </div>
+                    <select id="gearRArm" class="ui-font gear-select" style="font-size: 0.8rem; padding: 4px; width: 100%; box-sizing: border-box; margin-bottom: 4px;">
+
+                        <option value="Empty" data-ap="0">Empty</option>
+                        <optgroup label="Armor">
+                            <option value="Shield" data-ap="3">Shield (3 AP, Swords 1)</option>
+                            <option value="Gauntlet" data-ap="1">Gauntlet (1 AP, Swords 2)</option>
+                        </optgroup>
+                        <optgroup label="Weapons">
+                            <option value="Club" data-ap="0">Club</option>
+                            <option value="Dagger" data-ap="0">Dagger</option>
+                            <option value="Staff" data-ap="0">Staff</option>
+                            <option value="Sling" data-ap="0">Sling</option>
+                            <option value="Axe" data-ap="0">Axe</option>
+                            <option value="Bow" data-ap="0">Bow</option>
+                            <option value="Spear" data-ap="0">Spear</option>
+                            <option value="Whip" data-ap="0">Whip</option>
+                            <option value="Sword" data-ap="0">Sword</option>
+                            <option value="Mace" data-ap="0">Mace</option>
+                            <option value="Crossbow" data-ap="0">Crossbow</option>
+                            <option value="Warhammer" data-ap="0">Warhammer</option>
+                            <option value="Greatsword" data-ap="0">Greatsword</option>
+                            <option value="Polearm" data-ap="0">Polearm</option>
+                            <option value="Lance" data-ap="0">Lance</option>
+                        </optgroup>
+                        <optgroup label="Magick Items">
+                            <option value="Duban" data-ap="3">Dubán (Shield)</option>
+                            <option value="Gauntlets of Missing Missiles" data-ap="1">Gauntlets of Missiles</option>
+                            <option value="Jarnglofar" data-ap="1">Járnglófar (Gauntlet)</option>
+                            <option value="Silence" data-ap="3">Silence (Shield)</option>
+                            <option value="Begallta" data-ap="0">Begallta (Dagger)</option>
+                            <option value="Dainsleif" data-ap="0">Dáinsleif (Sword)</option>
+                            <option value="Draugr" data-ap="0">Draugr (Sword)</option>
+                            <option value="Dyrnwyn" data-ap="0">Dyrnwyn (Sword)</option>
+                            <option value="Elf-Shot" data-ap="0">Elf-Shot (Bow)</option>
+                            <option value="Fragarach" data-ap="0">Fragarach (Sword)</option>
+                            <option value="La Scavara" data-ap="0">La Scávara (Lance)</option>
+                            <option value="Mistletoe" data-ap="0">Mistletoe (Sword)</option>
+                            <option value="Morallta" data-ap="0">Morallta (Sword)</option>
+                            <option value="Orna" data-ap="0">Orna (Sword)</option>
+                            <option value="Magick Sling" data-ap="0">Magick Sling</option>
+                            <option value="Szczerbiec" data-ap="0">Szczerbiec (Dagger)</option>
+                            <option value="Thunderbolt" data-ap="0">Thunderbolt (Javelin)</option>
+                            <option value="Tizona" data-ap="0">Tizona (Sword)</option>
+                        </optgroup>
+                    
+                        <optgroup label="Custom">
+                            <option value="Custom 1 AP" data-ap="1">Custom (1 AP)</option>
+                            <option value="Custom 2 AP" data-ap="2">Custom (2 AP)</option>
+                            <option value="Custom 3 AP" data-ap="3">Custom (3 AP)</option>
+                            <option value="Custom 4 AP" data-ap="4">Custom (4 AP)</option>
+                        </optgroup>
+    </select>
+<input type="text" id="customRArm" class="custom-gear-input" placeholder="Custom item name..." style="display: none; font-size: 0.75rem; padding: 4px; width: 100%; box-sizing: border-box; border: 1px dashed var(--border-color); background: rgba(0,0,0,0.03);">
+                    <div class="tracker-row mt-2">
+                        <span class="ui-font" style="font-size: 0.6rem;">Notches</span>
+                        <div class="pips-container" id="notches-RArm"></div>
+                    </div>
+                    <span class="injury-text">Wounded: Drop item / No use.</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- L. Leg -->
+                <div class="hit-location" id="loc-LLeg">
+                    <div class="tracker-row">
+                        <label>L. Leg</label>
+                        <div class="pips-container">
+                            <div class="pip circle wound" onclick="toggleWound('LLeg', 1)" id="wound-LLeg-1"></div>
+                        </div>
+                    </div>
+                    <select id="gearLLeg" class="ui-font gear-select" style="font-size: 0.8rem; padding: 4px; width: 100%; box-sizing: border-box; margin-bottom: 4px;">
+
+                        <option value="None" data-ap="0">None</option>
+                        <option value="Greave" data-ap="2">Greave (2 AP, Swords 2)</option>
+                    
+                        <optgroup label="Custom">
+                            <option value="Custom 1 AP" data-ap="1">Custom (1 AP)</option>
+                            <option value="Custom 2 AP" data-ap="2">Custom (2 AP)</option>
+                            <option value="Custom 3 AP" data-ap="3">Custom (3 AP)</option>
+                            <option value="Custom 4 AP" data-ap="4">Custom (4 AP)</option>
+                        </optgroup>
+    </select>
+<input type="text" id="customLLeg" class="custom-gear-input" placeholder="Custom item name..." style="display: none; font-size: 0.75rem; padding: 4px; width: 100%; box-sizing: border-box; border: 1px dashed var(--border-color); background: rgba(0,0,0,0.03);">
+                    <div class="tracker-row mt-2">
+                        <span class="ui-font" style="font-size: 0.6rem;">Notches</span>
+                        <div class="pips-container" id="notches-LLeg"></div>
+                    </div>
+                    <span class="injury-text">Wounded: Speed -2 & No Move.</span>
+                </div>
+
+                <!-- R. Leg -->
+                <div class="hit-location" id="loc-RLeg">
+                    <div class="tracker-row">
+                        <label>R. Leg</label>
+                        <div class="pips-container">
+                            <div class="pip circle wound" onclick="toggleWound('RLeg', 1)" id="wound-RLeg-1"></div>
+                        </div>
+                    </div>
+                    <select id="gearRLeg" class="ui-font gear-select" style="font-size: 0.8rem; padding: 4px; width: 100%; box-sizing: border-box; margin-bottom: 4px;">
+
+                        <option value="None" data-ap="0">None</option>
+                        <option value="Greave" data-ap="2">Greave (2 AP, Swords 2)</option>
+                    
+                        <optgroup label="Custom">
+                            <option value="Custom 1 AP" data-ap="1">Custom (1 AP)</option>
+                            <option value="Custom 2 AP" data-ap="2">Custom (2 AP)</option>
+                            <option value="Custom 3 AP" data-ap="3">Custom (3 AP)</option>
+                            <option value="Custom 4 AP" data-ap="4">Custom (4 AP)</option>
+                        </optgroup>
+    </select>
+<input type="text" id="customRLeg" class="custom-gear-input" placeholder="Custom item name..." style="display: none; font-size: 0.75rem; padding: 4px; width: 100%; box-sizing: border-box; border: 1px dashed var(--border-color); background: rgba(0,0,0,0.03);">
+                    <div class="tracker-row mt-2">
+                        <span class="ui-font" style="font-size: 0.6rem;">Notches</span>
+                        <div class="pips-container" id="notches-RLeg"></div>
+                    </div>
+                    <span class="injury-text">Wounded: Speed -2 & No Move.</span>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Talents & Magic Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Talents & Magick</h2>
+            </div>
+            
+            <div class="form-group">
+                <label>Spells, Recipes & Rituals</label>
+                <div class="grid-2 mb-2" id="spell-dropdown-row">
+                    <div style="display: flex; gap: 4px; width: 100%;">
+                        <select id="selectSpellVerb" onchange="toggleSpellCustom()" style="flex: 1; padding: 4px; font-size: 0.8rem; box-sizing: border-box;">
+                            <option value="" disabled selected>Verb...</option>
+                        </select>
+                        <select id="selectSpellNoun" style="flex: 1; padding: 4px; font-size: 0.8rem; box-sizing: border-box;">
+                            <option value="" disabled selected>Noun...</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="addSpellCombo()">Add</button>
+                </div>
+                <div class="grid-2 mb-2" id="spell-custom-row" style="display: none;">
+                    <input type="text" id="inputSpells" placeholder="Custom spell, recipe or ritual..." style="flex: 1; padding: 4px; font-size: 0.8rem;">
+                    <div style="display: flex; gap: 4px;">
+                        <button type="button" class="btn btn-sm btn-primary" style="flex: 1;" onclick="addSpellCustom()">Add</button>
+                        <button type="button" class="btn btn-sm" style="background: var(--border-color); color: var(--text-color);" onclick="cancelSpellCustom()">X</button>
+                    </div>
+                </div>
+                <ul id="listSpells" class="dynamic-list"></ul>
+            </div>
+
+
+            <div class="form-group">
+                <label>Talents</label>
+                <div class="grid-2 mb-2">
+                    <select id="selectTalents" onchange="toggleListInput('Talents')" style="flex: 1; padding: 4px;">
+                        <option value="" disabled selected>Select Talent...</option>
+                    </select>
+                    <input type="text" id="inputTalents" placeholder="Custom talent..." style="display: none; flex: 1;">
+                    <button type="button" class="btn btn-sm btn-primary" data-category="Talents">Add</button>
+                </div>
+                <ul id="listTalents" class="dynamic-list"></ul>
+            </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Inventory</h2>
+                <div class="ui-font" style="font-size: 0.7rem;">Wealth: <input type="number" id="invWealth" style="width: 50px; padding: 2px; border: none; background: transparent; font-weight: bold;"> Coins</div>
+            </div>
+
+            <div class="form-group">
+                <label>Inventory Search (Equipment & Weapons)</label>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <select id="selectInventory" onchange="toggleListInput('Inventory')" style="flex: 1; padding: 4px;">
+                        <option value="" disabled selected>Select gear...</option>
+                    </select>
+                    <input type="text" id="inputInventory" placeholder="Custom gear..." style="display: none; flex: 1;">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="addItemToList('Inventory')">Add</button>
+                </div>
+                <div class="ui-font" style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">Capacity: <span class="display-slots">0 / 11</span> (10 + Coins, Max 14. Includes equipped gear)</div>
+            </div>
+            
+            <ul id="listInventory" class="dynamic-list"></ul>
+        </section>
+
+        <!-- Narrative Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Narrative & Relations</h2>
+            </div>
+            
+            <div class="form-group">
+                <label>Friends & Allies</label>
+                <div class="grid-2 mb-2">
+                    <input type="text" id="inputFriends" placeholder="Add friend...">
+                    <button type="button" class="btn btn-sm btn-primary" data-category="Friends">Add</button>
+                </div>
+                <ul id="listFriends" class="dynamic-list"></ul>
+            </div>
+
+            <div class="form-group">
+                <label>Foes & Rivals</label>
+                <div class="grid-2 mb-2">
+                    <input type="text" id="inputFoes" placeholder="Add foe...">
+                    <button type="button" class="btn btn-sm btn-primary" data-category="Foes">Add</button>
+                </div>
+                <ul id="listFoes" class="dynamic-list"></ul>
+            </div>
+
+            <div class="form-group">
+                <label>Instincts & Habits</label>
+                <div class="grid-2 mb-2">
+                    <input type="text" id="inputInstincts" placeholder="Add instinct...">
+                    <button type="button" class="btn btn-sm btn-primary" data-category="Instincts">Add</button>
+                </div>
+                <ul id="listInstincts" class="dynamic-list"></ul>
+            </div>
+
+            <div class="form-group">
+                <label>Current Goals (XP)</label>
+                <div class="grid-2 mb-2">
+                    <input type="text" id="inputGoals" placeholder="Add goal...">
+                    <button type="button" class="btn btn-sm btn-primary" data-category="Goals">Add</button>
+                </div>
+                <ul id="listGoals" class="dynamic-list"></ul>
+            </div>
+
+            <!-- Rules Reference Section -->
+        <section class="card">
+            <div class="section-title">
+                <h2>Rules Quick-Reference</h2>
+                <button class="btn btn-sm btn-primary" onclick="toggleRef()">Show/Hide Reference</button>
+            </div>
+            
+            <div id="ref-content" class="hidden">
+                <!-- Row 1: Testing & Difficulty -->
+                <div class="grid-2 mt-2" style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <div>
+                        <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">Test Resolution</h4>
+                        <ul style="font-size: 0.6rem; padding-left: 12px; margin-top: 5px;">
+                            <li><strong>Success</strong>: Total 14 or higher.</li>
+                            <li><strong>Great Success</strong>: First draw 14+ AND matching Suit.</li>
+                            <li><strong>Push</strong>: Draw 2nd card if total < 14.</li>
+                            <li><strong>Great Failure</strong>: Fail after Pushing. (+1 Resolve)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">Difficulty (Penalty)</h4>
+                        <ul style="font-size: 0.6rem; padding-left: 12px; margin-top: 5px;">
+                            <li>Standard: 0</li>
+                            <li>Tough: -2 | Hard: -4</li>
+                            <li>Extreme: -6</li>
+                            <li>Opposed: -[Opponent Stat]</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Row 2: Advancement & Tags -->
+                <div class="grid-2 mt-2" style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <div>
+                        <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">XP Advancement</h4>
+                        <ul style="font-size: 0.6rem; padding-left: 12px; margin-top: 5px;">
+                            <li>+1 Stat (Max 6): 10 XP</li>
+                            <li>Vocation Talent: 5 XP</li>
+                            <li>Other Talent: 10 XP</li>
+                            <li>Earn XP: Participate, Goal, Survival.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">Weapon Tags</h4>
+                        <ul style="font-size: 0.6rem; padding-left: 12px; margin-top: 5px; columns: 2;">
+                            <li>Blunt</li><li>Slash</li><li>Pierce</li><li>Bulky</li><li>Brace</li><li>Charge</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Row 3: Combat Actions & Responses -->
+                <div class="grid-2 mt-2" style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <div>
+                        <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">Combat Actions</h4>
+                        <ul style="font-size: 0.6rem; padding-left: 12px; margin-top: 5px;">
+                            <li><strong>Move:</strong> Discard a card to move squares = Speed.</li>
+                            <li><strong>Attack:</strong> Swords Test vs. Initiative. (Great Success = +1 Wound)</li>
+                            <li><strong>Cast Spell:</strong> Spend Resolve. Opposed Wands Test if on enemy.</li>
+                            <li><strong>Grapple/Shove:</strong> Opposed Swords Test to immobilize or push.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">Responses & Special</h4>
+                        <ul style="font-size: 0.6rem; padding-left: 12px; margin-top: 5px;">
+                            <li><strong>Dodge:</strong> Opposed Coins Test to evade harm.</li>
+                            <li><strong>Riposte:</strong> If missed, play a card to immediately Opposed Attack.</li>
+                            <li><strong>Called Shot:</strong> Opposed Swords Test to aim for specific unarmored body part.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Row 4: Arcane Magick (Simplified) -->
+                <div class="mt-2" style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <h4 class="ui-font" style="font-size: 0.7rem; color: var(--accent-color);">Arcane Magick</h4>
+                    <p style="font-size: 0.6rem; margin-bottom: 5px; opacity: 0.7;">Combine a Suit Verb with a Major Arcana Noun.</p>
+                    <div style="font-size: 0.55rem; columns: 2; gap: 10px;">
+                        <strong>Verbs:</strong> Fill, Attract, Delight, Protect, Mend, Conjure, Weaken, Calm, Heal, Energize, Change, Grow, Gather, Control, Quick, Toughen, Command, Heat, Create, Explode, Hide, Afflict, Silence, Intimidate, Teleport, Steal, Force, Detect, Give, Balance, Combine, Take, Summons, Transcend, Slow.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="section-title">
+                <h2>Traits & General Notes</h2>
+            </div>
+            <div class="form-group">
+                <textarea id="charNotes" rows="4" placeholder="Character history, appearance, etc. (Auto-saves)"></textarea>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 20px 0;">
+            <button id="reset-character-btn" class="btn ui-font" style="background-color: var(--danger); color: white; opacity: 0.6; font-size: 0.7rem;">Reset Character Sheet</button>
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;">Gloam RPG &copy; Lone Legend.</div>
+        </footer>
+    </div> <!-- End Container -->
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav">
+        <a href="#" onclick="document.querySelectorAll('.card')[0].scrollIntoView({behavior: 'smooth'}); return false;"><span class="icon">👤</span>Identity</a>
+        <a href="#" onclick="document.querySelectorAll('.card')[4].scrollIntoView({behavior: 'smooth'}); return false;"><span class="icon">🛡️</span>Armor</a>
+        <a href="#" onclick="document.querySelectorAll('.card')[5].scrollIntoView({behavior: 'smooth'}); return false;"><span class="icon">✨</span>Magick</a>
+        <a href="#" onclick="document.querySelectorAll('.card')[6].scrollIntoView({behavior: 'smooth'}); return false;"><span class="icon">🎒</span>Gear</a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA & CONFIG ---
+            const lifepathData = {
+                "Cups": ["(A-2) Had a brief romantic relationship", "(3-4) Fell out of favor with a group of people", "(5-6) Passed up an alluring opportunity", "(7-8) Disillusioned of a previously-held belief", "(9-10) Lived in a far-off land", "(Page) Pursued an ambition", "(Knight) Were in a long-term relationship", "(Queen) Took care of someone", "(King) Mentored in the arts by a patron"],
+                "Swords": ["(A-2) Realized a difficult truth", "(3-4) Mourned the loss of someone close to you", "(5-6) Fled from a dangerous situation", "(7-8) Imprisoned for a crime", "(9-10) Betrayed by a friend", "(Page) Made a terrible mistake that cost you", "(Knight) Killed someone", "(Queen) Withdrew from life for a time", "(King) Embarked on an intense intellectual study"],
+                "Wands": ["(A-2) Learned a new skill or language", "(3-4) Went on a journey to a distant land", "(5-6) Joined a group or guild", "(7-8) Overcame an obstacle", "(9-10) Received an unexpected burden", "(Page) Went on an adventure or quest", "(Knight) Saved a village from disaster", "(Queen) Started a new career", "(King) Achieved a position of authority"],
+                "Coins": ["(A-2) Worked long, hard days in a difficult job", "(3-4) Apprenticed a trade under a skilled teacher", "(5-6) Lost everything and became a vagabond", "(7-8) Mastered a craft or skill", "(9-10) Achieved an affluent lifestyle", "(Page) Studied at a prestigious academy", "(Knight) Oversaw operation of a business", "(Queen) Raised a child", "(King) Spent time in a noble court"]
+            };
+
+            const gearList = [
+                { group: "Armor", items: ["Helmet (2 AP, Head)", "Cuirass (3 AP, Torso)", "Gambeson (1 AP, Torso)", "Gauntlet (1 AP, Arm)", "Chainmail (3 AP, Torso)", "Greave (2 AP, Leg)", "Shield (3 AP, Any)"] },
+                { group: "Weapons", items: ["Club (Melee, Blunt)", "Dagger (Melee, Concealed)", "Staff (Melee, Blunt)", "Sling (Ranged, Blunt)", "Axe (Melee, Slash)", "Bow (Ranged, Pierce)", "Spear (Melee, Pierce)", "Whip (Melee, Grab, Disarm)", "Sword (Melee, Slash)", "Mace (Melee, Blunt)", "Crossbow (Ranged, Pierce, Reload)", "Warhammer (Melee, Blunt, Bulky)", "Greatsword (Melee, Slash, Bulky)", "Polearm (Melee, Pierce, Brace)", "Lance (Melee, Pierce, Charge)"] },
+                { group: "Trade Goods", items: ["Abrasive paper", "Arrows (20)", "Bear trap", "Bedroll", "Bell", "Bellows", "Blanket", "Bottle", "Cage (small)", "Caltrops (100)", "Candle", "Cauldron", "Chain (10 sq)", "Chalk", "Chisel", "Compass", "Crowbar", "Dice", "Dog", "File", "Fire poker", "Flint & Steel", "Flour", "Glue", "Grappling Hook", "Hammer", "Herbs", "Hourglass", "Incense", "Iron Spikes (10)", "Knife", "Lantern", "Liquor", "Lockpicks", "Manacles", "Marbles (100)", "Mirror", "Net", "Oil", "Paper", "Perfume", "Pole", "Quill & ink", "Rations (7)", "Rope", "Sack", "Saw", "Snowshoes", "Soap", "Sponge", "Spyglass", "Stakes (4)", "String", "Tarp", "Tent", "Torches (3)", "Waterskin", "Wax tablets", "Whistle", "Wooden chest"] }
+            ];
+            
+            
+            const talentsList = [
+                { group: "Cutpurse", items: ["Nimble", "One with the Shadows", "Sneak-Attack", "Poisoner", "Impersonate", "Split"] },
+                { group: "Herald", items: ["Disarming Presence", "Academic", "Duel of Wits", "Inspire", "Parley", "Verity & Guile"] },
+                { group: "Knight-Errant", items: ["Sally Forth", "Geas", "Itinerant Hospitality", "Martial Dominance", "Oath-sworn", "Trial by Combat"] },
+                { group: "Mystic", items: ["Magick", "Augury", "Sixth Sense", "Familiar", "Undo Magick", "Bind Magick"] }
+            ];
+
+            const verbsList = ["Fill", "Attract", "Delight", "Protect from", "Disintegrate", "Mend", "Conjure", "Weaken", "Solidify/liquefy", "Calm", "Speak with", "Charm", "Heal", "Become", "Energize", "Change", "Grow", "Gather", "Enrage", "Conquer", "Control", "Quick", "Toughen", "Command", "Release", "Incite", "Heat", "Create", "Explode", "Hide", "Afflict", "Silence", "Intimidate", "Teleport", "Steal", "Ensnare", "Discourage", "Defeat", "Transmute", "Force", "Detect", "Comprehend", "Give", "Balance", "Combine", "Take", "Isolate", "Share", "Harvest", "Sculpt", "Summon", "Transcend", "Enthrall", "Slow", "Protect", "Multiply"];
+            const nounsList = [
+                { group: "Major Arcana", items: ["Self", "Mind", "Consciousness", "Beauty", "Authority", "Knowledge", "Temptation", "Metal", "Strength", "Person", "Fate", "Truth", "Flesh", "Death", "Water", "Pain", "Earth", "Faith", "Beast", "Light", "Undead", "Fire"] },
+                { group: "The Shadow (Reversed)", items: ["Distraction", "Illusion", "Voice", "Ugliness", "Ice", "Ignorance", "Conflict", "Barrier", "Weakness", "Isolation", "Delay", "Blood", "Emptiness", "Life", "Imbalance", "Control", "Chaos", "Time", "Secret", "Sorrow", "Purpose", "Darkness"] }
+            ];
+
+            const armorLocations = ['Head', 'Torso', 'LArm', 'RArm', 'LLeg', 'RLeg'];
+            const allListCategories = ['LifepathEvents', 'Spells', 'Talents', 'Friends', 'Foes', 'Instincts', 'Goals', 'Inventory'];
+
+            // --- STATE & UI SYNC ---
+            let state = {
+                resolve: 0,
+                maxResolve: 10,
+                wounds: {},
+                notches: {},
+                initialized: false
+            };
+
+            // --- CORE FUNCTIONS ---
+
+            function updateDynamicStats() {
+                const coins = parseInt(document.getElementById('statCoins').value) || 0;
+                const cups = parseInt(document.getElementById('statCups').value) || 0;
+                const swords = parseInt(document.getElementById('statSwords').value) || 0;
+                const wands = parseInt(document.getElementById('statWands').value) || 0;
+
+                // Speed = Coins
+                document.getElementById('displaySpeed').textContent = coins;
+
+                // Slots = 10 + Coins (Cap 14)
+                const maxSlots = Math.min(14, 10 + coins);
+                updateSlotCount();
+
+                // Resolve Sync (Only on first load)
+                if (!state.initialized) {
+                    state.resolve = swords;
+                    state.initialized = true;
+                    saveState();
+                    renderResolve();
+                }
+
+                // Vocation Hint
+                const vocation = document.getElementById('charVocation').value;
+                const vocBonus = document.getElementById('vocation-bonus');
+                if (vocBonus) {
+                    vocBonus.textContent = '';
+                    const stats = { 'Cutpurse': coins, 'Herald': cups, 'Knight-Errant': swords, 'Mystic': wands };
+                    if (vocation && stats[vocation] >= 4) {
+                        vocBonus.textContent = '✓ Vocation Mastery';
+                    }
+                }
+
+                // Highlight stat box if 4+
+                ['Cups', 'Wands', 'Swords', 'Coins'].forEach(s => {
+                    const el = document.getElementById('box-' + s);
+                    const val = parseInt(document.getElementById('stat' + s).value);
+                    if (el) el.classList.toggle('highlight', val >= 4);
+                });
+            }
+
+            // (Removed legacy renderInventorySlots)
+
+            function updateSlotCount() {
+                const items = JSON.parse(localStorage.getItem('gloamList_Inventory') || '[]');
+                let used = items.length;
+
+                // Worn armor and weapons also take up slots
+                const locations = ['Head', 'Torso', 'LArm', 'RArm', 'LLeg', 'RLeg'];
+                locations.forEach(loc => {
+                    const select = document.getElementById('gear' + loc);
+                    if (select && select.value !== 'None' && select.value !== 'Empty' && !select.value.startsWith('Custom')) {
+                        used++;
+                    } else if (select && select.value.startsWith('Custom')) {
+                        const customInput = document.getElementById('custom' + loc);
+                        if (customInput && customInput.value.trim() !== '') {
+                            used++;
+                        }
+                    }
+                });
+
+                const max = Math.min(14, 10 + (parseInt(document.getElementById('statCoins').value) || 1));
+                document.querySelectorAll('.display-slots').forEach(display => {
+                    display.textContent = `${used} / ${max}`;
+                    display.style.color = used > max ? 'var(--danger)' : 'inherit';
+                });
+            }
+
+            // --- TRACKERS (RESOLVE, WOUNDS, NOTCHES) ---
+
+            function renderResolve() {
+                const container = document.getElementById('resolve-pips');
+                if (!container) return;
+                container.innerHTML = '';
+                for (let i = 1; i <= state.maxResolve; i++) {
+                    const pip = document.createElement('div');
+                    pip.className = `pip square resolve-pip ${i <= state.resolve ? 'checked' : ''}`;
+                    pip.onclick = () => {
+                        state.resolve = (i === state.resolve) ? i - 1 : i;
+                        saveState();
+                        renderResolve();
+                    };
+                    container.appendChild(pip);
+                }
+                const bar = document.getElementById('resolve-bar');
+                if (bar) {
+                    const pct = (state.resolve / state.maxResolve) * 100;
+                    bar.style.width = pct + '%';
+                }
+            }
+
+            window.toggleWound = (loc, index) => {
+                const key = `${loc}-${index}`;
+                state.wounds[key] = !state.wounds[key];
+                saveState();
+                updateWoundUI();
+                updateTotalWounds();
+            };
+
+            function updateTotalWounds() {
+                const warning = document.getElementById('death-warning');
+                if (warning) {
+                    // Rulebook: "If you take another Wound to the head, you die."
+                    warning.classList.toggle('hidden', !state.wounds['Head-2']);
+                }
+            }
+
+            function updateWoundUI() {
+                document.querySelectorAll('.pip.wound').forEach(p => {
+                    const id = p.id.replace('wound-', '');
+                    p.classList.toggle('checked', !!state.wounds[id]);
+                });
+                
+                armorLocations.forEach(loc => {
+                    const isWounded = [1, 2, 3].some(i => state.wounds[`${loc}-${i}`]);
+                    const el = document.getElementById(`loc-${loc}`);
+                    if (el) el.classList.toggle('wounded', isWounded);
+                });
+            }
+
+            function renderNotches(loc) {
+                const container = document.getElementById(`notches-${loc}`);
+                if (!container) return;
+                const select = document.getElementById(`gear${loc}`);
+                if (!select) return;
+                const ap = parseInt(select.options[select.selectedIndex].dataset.ap) || 0;
+                
+                // Toggle custom input visibility
+                const customInput = document.getElementById(`custom${loc}`);
+                if (customInput) {
+                    if (select.value.startsWith('Custom')) {
+                        customInput.style.display = 'block';
+                    } else {
+                        customInput.style.display = 'none';
+                    }
+                }
+                
+                container.innerHTML = '';
+                for (let i = 1; i <= ap; i++) {
+                    const key = `${loc}-${i}`;
+                    const pip = document.createElement('div');
+                    pip.className = `pip square notch ${state.notches[key] ? 'checked' : ''}`;
+                    pip.onclick = () => {
+                        state.notches[key] = !state.notches[key];
+                        saveState();
+                        renderNotches(loc);
+                    };
+                    container.appendChild(pip);
+                }
+
+                let checkedCount = 0;
+                for (let i = 1; i <= ap; i++) if (state.notches[`${loc}-${i}`]) checkedCount++;
+                const isBroken = ap > 0 && checkedCount >= ap;
+                const locEl = document.getElementById(`loc-${loc}`);
+                if (locEl) {
+                    locEl.style.textDecoration = isBroken ? 'line-through' : 'none';
+                    locEl.style.opacity = isBroken ? '0.6' : '1';
+                }
+            }
+
+            // (Removed legacy resetResolve)
+
+            // --- DATA LISTS & LIFEPATH ---
+
+            function setupLifepath() {
+                const suitSel = document.getElementById('eventSuit');
+                const eventSel = document.getElementById('inputLifepathEvents');
+                if (!suitSel || !eventSel) return;
+                
+                suitSel.addEventListener('change', () => {
+                    const suit = suitSel.value;
+                    eventSel.innerHTML = '<option value="" disabled selected>Select Event...</option>';
+                    if (lifepathData[suit]) {
+                        lifepathData[suit].forEach(e => {
+                            const opt = document.createElement('option');
+                            opt.value = e;
+                            opt.textContent = e;
+                            eventSel.appendChild(opt);
+                        });
+                    }
+                });
+
+                const addBtn = document.getElementById('btnAddLifepathEvent');
+                if (addBtn) {
+                    addBtn.onclick = () => {
+                        const suit = suitSel.value;
+                        const event = eventSel.value;
+                        if (suit && event) {
+                            addToList('LifepathEvents', `[${suit}] ${event}`);
+                            suitSel.value = '';
+                            eventSel.innerHTML = '<option value="" disabled selected>Select Suit First...</option>';
+                        }
+                    };
+                }
+            }
+
+            function renderList(category) {
+                const ul = document.getElementById('list' + category);
+                if (!ul) return;
+                const items = JSON.parse(localStorage.getItem('gloamList_' + category) || '[]');
+                ul.innerHTML = '';
+                items.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'list-item';
+                    li.innerHTML = `<span>${item}</span><button class="remove-btn">&times;</button>`;
+                    li.querySelector('button').onclick = () => {
+                        items.splice(index, 1);
+                        localStorage.setItem('gloamList_' + category, JSON.stringify(items));
+                        renderList(category);
+                        if (category === 'Inventory') updateSlotCount();
+                    };
+                    ul.appendChild(li);
+                });
+            }
+
+            function addToList(category, value) {
+                const items = JSON.parse(localStorage.getItem('gloamList_' + category) || '[]');
+                items.push(value);
+                localStorage.setItem('gloamList_' + category, JSON.stringify(items));
+                renderList(category);
+                if (category === 'Inventory') updateSlotCount();
+            }
+
+            window.addItemToList = (category) => {
+                const select = document.getElementById('select' + category);
+                const input = document.getElementById('input' + category);
+                let value = '';
+                
+                if (select && select.style.display !== 'none' && select.value !== '' && select.value !== 'Custom') {
+                    value = select.value;
+                    select.value = '';
+                } else if (input && input.value.trim()) {
+                    value = input.value.trim();
+                    input.value = '';
+                    if (select) {
+                        select.style.display = 'block';
+                        input.style.display = 'none';
+                        select.value = '';
+                    }
+                } else {
+                    return;
+                }
+
+                addToList(category, value);
+            }
+
+            window.toggleExp = (index) => {
+                const key = 'exp-' + index;
+                state.exp = state.exp || {};
+                state.exp[key] = !state.exp[key];
+                saveState();
+                updateExpUI();
+            }
+
+            function updateExpUI() {
+                document.querySelectorAll('.pip.exp').forEach(p => {
+                    const id = p.id;
+                    p.classList.toggle('checked', !!(state.exp && state.exp[id]));
+                });
+            }
+
+            window.toggleRef = () => {
+                const content = document.getElementById('ref-content');
+                if (content) content.classList.toggle('hidden');
+            }
+
+            // --- STORAGE & INIT ---
+
+            function saveState() {
+                localStorage.setItem('gloamState', JSON.stringify(state));
+            }
+
+            
+            function loadState() {
+                const saved = localStorage.getItem('gloamState');
+                if (saved) state = JSON.parse(saved);
+                renderResolve();
+                updateWoundUI();
+                updateExpUI();
+                armorLocations.forEach(loc => {
+                    renderNotches(loc);
+                    // Init custom input visibility
+                    const select = document.getElementById(`gear${loc}`);
+                    const customInput = document.getElementById(`custom${loc}`);
+                    if (select && customInput) {
+                        customInput.style.display = select.value.startsWith('Custom') ? 'block' : 'none';
+                    }
+                });
+            }
+
+            function bindAutoSave() {
+                const inputs = document.querySelectorAll('input:not([id^="input"]), select, textarea');
+                inputs.forEach(input => {
+                    if (!input.id) return;
+                    const key = 'gloamSheet_' + input.id;
+                    const saved = localStorage.getItem(key);
+                    if (saved !== null) input.value = saved;
+
+                    input.addEventListener('input', () => {
+                        localStorage.setItem(key, input.value);
+                        if (input.id.startsWith('stat')) updateDynamicStats();
+                        if (input.id.startsWith('gear')) renderNotches(input.id.replace('gear', ''));
+                    });
+                    
+                    if (input.tagName === 'SELECT') {
+                        input.addEventListener('change', () => {
+                            localStorage.setItem(key, input.value);
+                            if (input.id.startsWith('gear')) renderNotches(input.id.replace('gear', ''));
+                            if (input.id === 'charVocation' || input.id.startsWith('stat')) updateDynamicStats();
+                        });
+                    }
+                });
+            }
+
+            // Theme Toggle
+            const themeBtn = document.getElementById('theme-toggle-btn');
+            if (themeBtn) {
+                themeBtn.onclick = () => {
+                    document.body.classList.toggle('dark-mode');
+                    const isDark = document.body.classList.contains('dark-mode');
+                    themeBtn.textContent = isDark ? '☀️' : '🌙';
+                    localStorage.setItem('gloamTheme', isDark ? 'dark' : 'light');
+                };
+                if (localStorage.getItem('gloamTheme') === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    themeBtn.textContent = '☀️';
+                }
+            }
+
+
+            // Populate Selects
+            function populateSelect(selectId, listItems) {
+                const select = document.getElementById(selectId);
+                if (!select) return;
+                listItems.forEach(item => {
+                    if (typeof item === 'string') {
+                        const opt = document.createElement('option');
+                        opt.value = item;
+                        opt.textContent = item;
+                        select.appendChild(opt);
+                    } else if (typeof item === 'object') {
+                        const group = document.createElement('optgroup');
+                        group.label = item.group;
+                        item.items.forEach(s => {
+                            const opt = document.createElement('option');
+                            opt.value = s;
+                            opt.textContent = s;
+                            group.appendChild(opt);
+                        });
+                        select.appendChild(group);
+                    }
+                });
+                const customGroup = document.createElement('optgroup');
+                customGroup.label = "Custom";
+                const customOpt = document.createElement('option');
+                customOpt.value = "Custom";
+                customOpt.textContent = "Custom...";
+                customGroup.appendChild(customOpt);
+                select.appendChild(customGroup);
+            }
+
+            populateSelect('selectInventory', gearList);
+            populateSelect('selectTalents', talentsList);
+            populateSelect('selectSpellVerb', verbsList);
+            populateSelect('selectSpellNoun', nounsList);
+
+
+            // Add buttons
+                        window.toggleSpellCustom = () => {
+                const select = document.getElementById('selectSpellVerb');
+                if (select && select.value === 'Custom') {
+                    document.getElementById('spell-dropdown-row').style.display = 'none';
+                    document.getElementById('spell-custom-row').style.display = 'grid';
+                    document.getElementById('inputSpells').focus();
+                    select.value = ''; // reset
+                }
+            };
+
+            window.cancelSpellCustom = () => {
+                document.getElementById('spell-dropdown-row').style.display = 'grid';
+                document.getElementById('spell-custom-row').style.display = 'none';
+                document.getElementById('inputSpells').value = '';
+            };
+
+            window.addSpellCombo = () => {
+                const verb = document.getElementById('selectSpellVerb').value;
+                const noun = document.getElementById('selectSpellNoun').value;
+                if (verb && noun && verb !== 'Custom' && noun !== 'Custom') {
+                    addToList('Spells', `${verb} + ${noun}`);
+                    document.getElementById('selectSpellVerb').value = '';
+                    document.getElementById('selectSpellNoun').value = '';
+                }
+            };
+
+            window.addSpellCustom = () => {
+                const input = document.getElementById('inputSpells');
+                if (input && input.value.trim()) {
+                    addToList('Spells', input.value.trim());
+                    cancelSpellCustom();
+                }
+            };
+
+            window.toggleListInput = (cat) => {
+                const select = document.getElementById('select' + cat);
+                const input = document.getElementById('input' + cat);
+                if (select && input) {
+                    if (select.value === 'Custom') {
+                        select.style.display = 'none';
+                        input.style.display = 'block';
+                        input.focus();
+                    }
+                }
+            };
+
+            document.querySelectorAll('button[data-category]').forEach(btn => {
+                btn.onclick = () => {
+                    const cat = btn.dataset.category;
+                    const select = document.getElementById('select' + cat);
+                    const input = document.getElementById('input' + cat);
+                    let val = '';
+                    
+                    if (select && select.style.display !== 'none' && select.value !== '' && select.value !== 'Custom') {
+                        val = select.value;
+                        select.value = ''; // reset
+                    } else if (input && input.value.trim()) {
+                        val = input.value.trim();
+                        input.value = ''; // reset
+                        if (select) {
+                            select.style.display = 'block';
+                            input.style.display = 'none';
+                            select.value = '';
+                        }
+                    }
+
+                    if (val) {
+                        addToList(cat, val);
+                    }
+                };
+            });
+
+            // Reset
+            const resetBtn = document.getElementById('reset-character-btn');
+            if (resetBtn) {
+                let confirmReset = false;
+                resetBtn.addEventListener('click', () => {
+                    if (!confirmReset) {
+                        confirmReset = true;
+                        const originalText = resetBtn.textContent;
+                        resetBtn.textContent = 'Click again to confirm';
+                        resetBtn.style.opacity = '1';
+                        setTimeout(() => {
+                            confirmReset = false;
+                            resetBtn.textContent = originalText;
+                            resetBtn.style.opacity = '0.6';
+                        }, 5000);
+                    } else {
+                        Object.keys(localStorage).forEach(key => {
+                            if (key.startsWith('gloam')) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                        location.reload();
+                    }
+                });
+            }
+
+            // (Removed legacy addItemToInventory)
+
+            // Init
+            bindAutoSave();
+            loadState();
+            updateDynamicStats();
+            setupLifepath();
+            allListCategories.forEach(renderList);
+            updateTotalWounds();
+        });
+    </script>
+</body>
+</html>
