@@ -6,3 +6,6 @@
 
 # Allow the .gitignore file itself
 !.gitignore
+
+# Allow the README
+!README.md
