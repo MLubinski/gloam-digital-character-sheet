@@ -6,8 +6,6 @@
     <title>Gloam Mobile Character Sheet</title>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&display=swap');
-
         :root {
             --bg-color: #e8e4d8; /* Richer parchment */
             --card-bg: #ffffff;
@@ -48,7 +46,7 @@
         }
 
         body {
-            font-family: 'Spectral', serif;
+            font-family: Georgia, serif;
             background-color: var(--bg-color);
             background-image: var(--paper-texture);
             color: var(--text-main);
@@ -60,7 +58,7 @@
         }
 
         h1, h2, h3, h4, .ui-font {
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin: 0;
@@ -103,7 +101,7 @@
             padding: 2px 8px;
             font-size: 0.65rem;
             border-radius: 4px;
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         /* Cards & Sections */
@@ -143,7 +141,7 @@
 
         label {
             display: block;
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--text-muted);
@@ -160,7 +158,7 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 10px 12px;
-            font-family: 'Spectral', serif;
+            font-family: Georgia, serif;
             font-size: 16px;
             color: var(--text-main);
             transition: all 0.2s ease;
@@ -172,9 +170,8 @@
             box-shadow: 0 0 0 3px var(--focus-shadow);
         }
 
-        option {
-            background-color: var(--input-bg);
-            color: var(--text-main);
+        select {
+            color-scheme: light dark;
         }
 
         /* Grid Layouts */
@@ -203,7 +200,7 @@
         }
 
         .stat-label {
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 0.7rem;
             font-weight: 700;
             display: block;
@@ -216,7 +213,6 @@
             text-align: center;
             padding: 4px !important;
             border: none !important;
-            background: transparent !important;
         }
 
         /* Tracker Elements (Wounds, Notches, Resolve) */
@@ -297,7 +293,7 @@
 
         /* Buttons */
         .btn {
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-weight: 700;
             text-transform: uppercase;
             padding: 12px 16px;
@@ -416,7 +412,7 @@
         .mobile-nav a {
             color: var(--text-main);
             text-decoration: none;
-            font-family: 'Outfit', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -442,7 +438,7 @@
         <header class="header">
             <h1 class="gloam-logo">Gloam</h1>
             <div class="gloam-subtitle">Character Sheet</div>
-            <span class="version-badge">v1.02 Ruleset</span>
+            <a href="https://the-lone-legend.itch.io/gloam" target="_blank" rel="noopener noreferrer" style="text-decoration: none;"><span class="version-badge">v1.02 Ruleset</span></a>
         </header>
 
         <!-- Main Identity Section -->
@@ -485,18 +481,6 @@
                     <label>Experience</label>
                     <div style="display: flex; flex-direction: column; gap: 5px;">
                         <input type="number" id="statExp" placeholder="0" style="margin-bottom: 5px;">
-                        <div class="pips-container" id="exp-pips" style="flex-wrap: wrap;">
-                            <div class="pip square exp" onclick="toggleExp(1)" id="exp-1"></div>
-                            <div class="pip square exp" onclick="toggleExp(2)" id="exp-2"></div>
-                            <div class="pip square exp" onclick="toggleExp(3)" id="exp-3"></div>
-                            <div class="pip square exp" onclick="toggleExp(4)" id="exp-4"></div>
-                            <div class="pip square exp" onclick="toggleExp(5)" id="exp-5"></div>
-                            <div class="pip square exp" onclick="toggleExp(6)" id="exp-6"></div>
-                            <div class="pip square exp" onclick="toggleExp(7)" id="exp-7"></div>
-                            <div class="pip square exp" onclick="toggleExp(8)" id="exp-8"></div>
-                            <div class="pip square exp" onclick="toggleExp(9)" id="exp-9"></div>
-                            <div class="pip square exp" onclick="toggleExp(10)" id="exp-10"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -512,28 +496,28 @@
             <div class="grid-4 mb-2">
                 <div class="stat-box" id="box-Cups">
                     <span class="stat-label">Cups</span>
-                    <select id="statCups" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                    <select id="statCups" class="stat-input" style="width: 100%;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                         <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                     </select>
                 </div>
                 <div class="stat-box" id="box-Wands">
                     <span class="stat-label">Wands</span>
-                    <select id="statWands" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                    <select id="statWands" class="stat-input" style="width: 100%;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                         <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                     </select>
                 </div>
                 <div class="stat-box" id="box-Swords">
                     <span class="stat-label">Swords</span>
-                    <select id="statSwords" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                    <select id="statSwords" class="stat-input" style="width: 100%;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                         <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                     </select>
                 </div>
                 <div class="stat-box" id="box-Coins">
                     <span class="stat-label">Coins</span>
-                    <select id="statCoins" class="stat-input" style="appearance: none; -webkit-appearance: none; width: 100%;">
+                    <select id="statCoins" class="stat-input" style="width: 100%;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option>
                         <option value="4">4</option><option value="5">5</option><option value="6">6</option>
                     </select>
@@ -1389,21 +1373,6 @@
                 addToList(category, value);
             }
 
-            window.toggleExp = (index) => {
-                const key = 'exp-' + index;
-                state.exp = state.exp || {};
-                state.exp[key] = !state.exp[key];
-                saveState();
-                updateExpUI();
-            }
-
-            function updateExpUI() {
-                document.querySelectorAll('.pip.exp').forEach(p => {
-                    const id = p.id;
-                    p.classList.toggle('checked', !!(state.exp && state.exp[id]));
-                });
-            }
-
             window.toggleRef = () => {
                 const content = document.getElementById('ref-content');
                 if (content) content.classList.toggle('hidden');
@@ -1421,7 +1390,6 @@
                 if (saved) state = JSON.parse(saved);
                 renderResolve();
                 updateWoundUI();
-                updateExpUI();
                 armorLocations.forEach(loc => {
                     renderNotches(loc);
                     // Init custom input visibility

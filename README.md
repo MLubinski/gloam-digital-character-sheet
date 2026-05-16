@@ -22,3 +22,7 @@ This is an independent fan-made tool. All Gloam rules, lore, and mechanics are c
 To play the game, you must purchase the official rulebook. You can **[purchase the Gloam RPG rulebook here](https://the-lone-legend.itch.io/gloam)**.
 
 The HTML, CSS, and Javascript code for this character sheet is provided under the [MIT License](LICENSE), allowing free use and modification of the software tool itself.
+
+## AI-Assisted Code Disclaimer
+
+Parts of the source code in this repository were generated, assisted, or optimized using artificial intelligence (AI) tools (e.g., GitHub Copilot, ChatGPT). 
